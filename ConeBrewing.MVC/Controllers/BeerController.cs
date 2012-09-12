@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConeBrewing.Data.Finders;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -8,14 +9,21 @@ namespace ConeBrewing.MVC.Controllers
 {
     public class BeerController : Controller
     {
+        private readonly IBeerFinder _beerFinder;
+
+        public BeerController(IBeerFinder beerFinder)
+        {
+            _beerFinder = beerFinder;
+        }
+        
         public ActionResult Index()
         {
-            return View();
+            return View(_beerFinder.GetAll());
         }
 
         public ActionResult Details(int id)
         {
-            return View();
+            return View(_beerFinder.Get(id));
         }
     }
 }
