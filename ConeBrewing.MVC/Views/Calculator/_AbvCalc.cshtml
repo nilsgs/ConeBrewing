@@ -1,0 +1,55 @@
+﻿<h3>ABV Calculator</h3>
+
+<form class="form-horizontal">
+    <div class="control-group">
+        <label class="control-label">Equation</label>
+        <div class="controls">
+            <label class="radio inline"><input type="radio" value="Standard" data-bind="checked: equation" />Standard</label>
+            <label class="radio inline"><input type="radio" value="Alternate" data-bind="checked: equation" />Alternate</label>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="og">Original Gravity</label>
+        <div class="controls">
+            <input id="og" data-bind='value: og, valueUpdate: "afterkeydown"'/>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="fg">Final Gravity</label>
+        <div class="controls">
+            <input id="fg" data-bind='value: fg, valueUpdate: "afterkeydown"'/>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="abv">ABV</label>
+        <div class="controls">
+            <div class="input-append">
+                <input id="abv" type="text" class="span2" data-bind="value: abv().toFixed(2)"/>
+                <span class="add-on">%</span>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript">
+    var AbvViewModel = function () {
+        var self = this;
+        self.equation = ko.observable("Standard");
+        self.og = ko.observable(1.050);
+        self.fg = ko.observable(1.010);
+
+        self.isStandard = ko.computed(function () {
+            return self.equation() === "Standard";
+        }, this);
+        
+        self.abv = ko.computed(function () {
+            if (self.isStandard()) {
+                return (self.og() - self.fg()) * 131.25;
+            } else {
+                return (76.08 * (self.og() - self.fg()) / (1.775 - self.og()) * (self.fg() / 0.794));
+            }
+        }, this);
+    };
+
+    ko.applyBindings(new AbvViewModel());
+</script>

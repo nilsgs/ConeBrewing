@@ -1,0 +1,41 @@
+﻿@{
+    ViewBag.Title = "Brewing Calculators";
+}
+
+<script type="text/javascript">
+    function show(action) {
+        $('calculator').empty();
+        $('#calculator').load("/Calculator/" + action);
+        $("#modal").modal("show");
+    }
+</script>
+
+<ul class="thumbnails">
+    <li class="span6">
+        <div class="thumbnail">
+            <h3>ABV - Alcohol By Volume</h3>
+            <p>If you took an original gravity reading (or had estimated OG), and also took a final gravity (FG) 
+                reading prior to adding priming sugar bottling you can find out your batch’s alcohol by volume ABV.</p>
+            <button class="btn btn-block btn-primary" onclick=" show('Abv');">Calculate ABV</button>
+        </div>
+    </li>
+    <li class="span6">
+        <div class="thumbnail">
+            <h3>IBU - Bitterness</h3>
+            <p>IBU = international bittering units – This calculator tells you how many IBUs your batch has, given hops additions and wort gravity.</p>
+            <button class="btn btn-block btn-primary" onclick=" show('Ibu');">Calculate IBU</button>
+        </div>
+    </li>
+</ul>
+
+<div id="modal" class="modal hide fade">
+    <div class="modal-body">
+        <div id="calculator">
+            
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+    </div>
+</div>
+
