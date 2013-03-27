@@ -1,1 +1,94 @@
 ﻿<h3>IBU Calculator</h3>
+
+<form class="form-horizontal">
+    <div class="control-group">
+        <label class="control-label">Wort Gravity</label>
+        <div class="controls">
+            <input id="og" data-bind='value: og, valueUpdate: "afterkeydown"'/>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">Final volume (liter)</label>
+        <div class="controls">
+            <input id="volume" data-bind='value: volume, valueUpdate: "afterkeydown"'/>
+        </div>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Alpha Acid</th>
+                <th>Weight (gram)</th>
+                <th>Boil Time (minute)</th>
+                <th>Utilization</th>
+                <th>Added Alpha Acids (mg/l)</th>
+                <th>Bittering Units</th>
+            </tr>
+        </thead>
+        <tbody data-bind="foreach: hops">
+            <tr>
+                <td><input class="span2" data-bind="value: alpha"/></td>
+                <td><input class="span2" data-bind="value: weight"/></td>
+                <td><input class="span2" data-bind="value: boil"/></td>
+                <td data-bind="text: utilization"></td>
+                <td data-bind="text: addedAlpha"></td>
+                <td data-bind="text: ibu"></td>
+            </tr>
+        </tbody>
+    </table>
+    <button class="btn btn-primary" data-bind="click: addHops">Add Hops</button>
+    <h4 data-bind="visible: totalIbu() > 0">Total IBU: <span data-bind="text: totalIbu()"></span></h4>
+</form>
+
+<script type="text/javascript">
+    var HopAddition = function(alpha, weight, boil, parent) {
+        var self = this;
+
+        self.alpha = ko.observable(alpha);
+        self.weight = ko.observable(weight);
+        self.boil = ko.observable(boil);
+
+        self.utilization = ko.computed(function () {
+            var util = (1.65 * (Math.pow(0.000125, (parent.og() - 1)))) * ((1 - Math.exp(-0.04 * self.boil())) / 4.15);
+            return util ? util.toFixed(5) : 0;
+        });
+
+        self.addedAlpha = ko.computed(function() {
+            var added = ((self.alpha() / 100) * self.weight() * 1000) / (parent.volume());
+            return added ? added.toFixed(2) : 0;
+        });
+
+        self.ibu = ko.computed(function() {
+            var ibus = self.utilization() * self.addedAlpha();
+            return ibus ? ibus.toFixed(0) : 0;
+        });
+    };
+
+    var IbuViewModel = function () {
+        var self = this;
+
+        self.og = ko.observable(1.050);
+        self.volume = ko.observable(20);
+
+        self.hops = ko.observableArray([
+            new HopAddition(0, 0, 0, self)
+        ]);
+        
+        // computed
+        self.totalIbu = ko.computed(function() {
+            var total = 0;
+            for (var i = 0; i < self.hops().length; i++) {
+                var ibu = parseInt(self.hops()[i].ibu());
+                total += ibu;
+            }
+
+            return total;
+        });
+        
+        // operations
+        self.addHops = function() {
+            self.hops.push(new HopAddition(0, 0, 0, self));
+        };
+    };
+
+    ko.applyBindings(new IbuViewModel());
+</script>
