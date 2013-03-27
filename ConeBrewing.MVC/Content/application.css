@@ -1,7 +1,9 @@
 ﻿@import url('bootstrap.css');
 
-.hero-unit {
+.hero-unit
+{
     color: #fff;
+    -webkit-text-shadow: 5px 5px 5px #000;
     text-shadow: 5px 5px 5px #000;
 }
 
